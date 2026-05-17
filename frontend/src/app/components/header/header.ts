@@ -8,13 +8,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './header.scss',
 })
 export class Header {
-  brandName = 'E-Commerce';
+  brandName = 'Game Store';
 
   navItems = [
-    { label: 'Products', path: '/products' },
+    { label: 'Games', path: '/products' },
     { label: 'Categories', path: '/categories' },
     { label: 'Deals', path: '/deals' },
-    { label: 'Cart', path: '/cart' },
+    { label: 'Wishlist', path: '/wishlist' },
     { label: 'Account', path: '/account' },
   ];
 }

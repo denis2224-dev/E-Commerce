@@ -9,32 +9,35 @@ import { RouterLink } from '@angular/router';
 })
 export class Home {
   categories = [
-    { name: 'Consoles', items: 'Next-gen systems', path: '/categories' },
-    { name: 'Games', items: 'New releases', path: '/products' },
-    { name: 'Accessories', items: 'Controllers, headsets, gear', path: '/categories' },
-    { name: 'Gift Cards', items: 'Digital credit', path: '/categories' },
+    { name: 'Action', items: 'Fast-paced campaigns', path: '/categories' },
+    { name: 'RPG', items: 'Deep worlds and builds', path: '/categories' },
+    { name: 'Sports', items: 'Competitive matchups', path: '/categories' },
+    { name: 'Strategy', items: 'Tactical decisions', path: '/categories' },
   ];
 
-  featuredProducts = [
+  featuredGames = [
     {
-      name: 'Pulse Controller',
-      category: 'Accessories',
-      price: '$69.99',
-      tag: 'Best seller',
-    },
-    {
-      name: 'Neon Strike',
-      category: 'Games',
+      name: 'Ghost of Yotei',
+      category: 'Action',
       price: '$59.99',
-      tag: 'New',
+      tag: 'Best seller',
+      imageUrl: '/images/games/ghost-of-yotei.png',
     },
     {
-      name: 'Arena Headset',
-      category: 'Audio',
-      price: '$89.99',
+      name: 'Assassins Creed Shadows',
+      category: 'RPG',
+      price: '$49.99',
+      tag: 'New',
+      imageUrl: '/images/games/ac-shadows.png',
+    },
+    {
+      name: 'War Thunder',
+      category: 'Strategy',
+      price: '$39.99',
       tag: 'Deal',
+      imageUrl: '/images/games/war_thunder.png',
     },
   ];
 
-  benefits = ['Fast checkout', 'Secure payments', 'Fresh inventory'];
+  benefits = ['Curated titles', 'Digital-ready checkout', 'Fresh releases'];
 }

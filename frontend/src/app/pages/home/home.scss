@@ -264,16 +264,38 @@ h1 {
 }
 
 .product-art {
+  position: relative;
   display: flex;
   align-items: end;
+  overflow: hidden;
   min-height: 210px;
   padding: 18px;
   background:
     radial-gradient(circle at 70% 36%, rgba(57, 255, 20, 0.25), transparent 7rem),
     linear-gradient(135deg, #121a14, #070a08);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.product-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 10, 8, 0.08), rgba(7, 10, 8, 0.78)),
+    radial-gradient(circle at 70% 36%, rgba(57, 255, 20, 0.18), transparent 8rem);
+}
+
+.product-art.has-image::before {
+  background:
+    linear-gradient(180deg, rgba(7, 10, 8, 0.12), rgba(7, 10, 8, 0.82)),
+    radial-gradient(circle at 70% 36%, rgba(57, 255, 20, 0.12), transparent 8rem);
 }
 
 .product-art span {
+  position: relative;
+  z-index: 1;
   padding: 7px 10px;
   border: 1px solid rgba(57, 255, 20, 0.35);
   border-radius: 999px;

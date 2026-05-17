@@ -2,19 +2,19 @@
   <section class="hero">
     <div class="hero-copy">
       <span class="eyebrow">Game store</span>
-      <h1>Level up your setup.</h1>
+      <h1>Find your next game.</h1>
       <p>
-        Discover games, consoles, and accessories built for faster play, sharper
-        control, and cleaner checkout.
+        Browse featured titles, discover new genres, and track the games you
+        want to play next.
       </p>
 
       <div class="hero-actions">
-        <a class="primary-action" routerLink="/products">Shop products</a>
+        <a class="primary-action" routerLink="/products">Browse games</a>
         <a class="secondary-action" routerLink="/deals">View deals</a>
       </div>
     </div>
 
-    <div class="hero-visual" aria-label="Featured gaming setup">
+    <div class="hero-visual" aria-label="Featured game artwork">
       <div class="console-card">
         <span class="screen-line"></span>
         <span class="screen-line short"></span>
@@ -47,15 +47,19 @@
     <div class="section-heading with-action">
       <div>
         <span class="eyebrow">Featured</span>
-        <h2>Popular right now</h2>
+        <h2>Featured games</h2>
       </div>
       <a routerLink="/products">View all</a>
     </div>
 
     <div class="product-grid">
-      @for (product of featuredProducts; track product.name) {
+      @for (product of featuredGames; track product.name) {
         <article class="product-card">
-          <div class="product-art">
+          <div
+            class="product-art"
+            [class.has-image]="product.imageUrl"
+            [style.background-image]="product.imageUrl ? 'url(' + product.imageUrl + ')' : null"
+          >
             <span>{{ product.tag }}</span>
           </div>
           <div class="product-details">
@@ -74,7 +78,7 @@
   <section class="promo-band">
     <div>
       <span class="eyebrow">Weekend drop</span>
-      <h2>Save up to 30% on accessories.</h2>
+      <h2>Save up to 30% on selected games.</h2>
     </div>
     <a routerLink="/deals">Shop deals</a>
   </section>
