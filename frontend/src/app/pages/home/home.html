@@ -1,0 +1,87 @@
+<main class="home-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Game store</span>
+      <h1>Level up your setup.</h1>
+      <p>
+        Discover games, consoles, and accessories built for faster play, sharper
+        control, and cleaner checkout.
+      </p>
+
+      <div class="hero-actions">
+        <a class="primary-action" routerLink="/products">Shop products</a>
+        <a class="secondary-action" routerLink="/deals">View deals</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-label="Featured gaming setup">
+      <div class="console-card">
+        <span class="screen-line"></span>
+        <span class="screen-line short"></span>
+        <span class="screen-glow"></span>
+      </div>
+      <div class="controller">
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <span class="eyebrow">Browse</span>
+      <h2>Featured categories</h2>
+    </div>
+
+    <div class="category-grid">
+      @for (category of categories; track category.name) {
+        <a class="category-card" [routerLink]="category.path">
+          <span>{{ category.name }}</span>
+          <small>{{ category.items }}</small>
+        </a>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading with-action">
+      <div>
+        <span class="eyebrow">Featured</span>
+        <h2>Popular right now</h2>
+      </div>
+      <a routerLink="/products">View all</a>
+    </div>
+
+    <div class="product-grid">
+      @for (product of featuredProducts; track product.name) {
+        <article class="product-card">
+          <div class="product-art">
+            <span>{{ product.tag }}</span>
+          </div>
+          <div class="product-details">
+            <small>{{ product.category }}</small>
+            <h3>{{ product.name }}</h3>
+            <div class="product-row">
+              <strong>{{ product.price }}</strong>
+              <button type="button">Add</button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="promo-band">
+    <div>
+      <span class="eyebrow">Weekend drop</span>
+      <h2>Save up to 30% on accessories.</h2>
+    </div>
+    <a routerLink="/deals">Shop deals</a>
+  </section>
+
+  <section class="benefits" aria-label="Store benefits">
+    @for (benefit of benefits; track benefit) {
+      <div>{{ benefit }}</div>
+    }
+  </section>
+</main>
