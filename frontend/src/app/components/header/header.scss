@@ -1,0 +1,141 @@
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+  padding: 0 32px;
+  background: #070a08;
+  border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.brand,
+.nav-links a {
+  color: #f4fff1;
+  text-decoration: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+  font-weight: 800;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(57, 255, 20, 0.75);
+  border-radius: 8px;
+  background: #39ff14;
+  color: #061006;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.55);
+}
+
+.brand-text {
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.nav-links a {
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #bfcfbc;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background: rgba(57, 255, 20, 0.1);
+  color: #39ff14;
+  box-shadow: inset 0 0 0 1px rgba(57, 255, 20, 0.22);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 180px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.icon-button,
+.sign-in-button {
+  border-radius: 8px;
+  border: 1px solid rgba(57, 255, 20, 0.45);
+  background: transparent;
+  color: #f4fff1;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+.icon-button svg {
+  width: 21px;
+  height: 21px;
+  fill: currentColor;
+}
+
+.sign-in-button {
+  height: 40px;
+  padding: 0 18px;
+  background: #39ff14;
+  color: #061006;
+  font-weight: 800;
+  box-shadow: 0 0 24px rgba(57, 255, 20, 0.34);
+}
+
+.icon-button:hover,
+.sign-in-button:hover {
+  border-color: #39ff14;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.4);
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .brand,
+  .actions {
+    min-width: 0;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
+  }
+}
