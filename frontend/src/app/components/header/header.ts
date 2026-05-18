@@ -11,7 +11,7 @@ export class Header {
   brandName = 'Game Store';
 
   navItems = [
-    { label: 'Games', path: '/products' },
+    { label: 'Games', path: '/games' },
     { label: 'Categories', path: '/categories' },
     { label: 'Deals', path: '/deals' },
     { label: 'Wishlist', path: '/wishlist' },

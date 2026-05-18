@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -20,6 +22,54 @@ public class DataSeeder implements CommandLineRunner {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final Faker faker = new Faker();
+    private static final List<String> GAME_CATEGORIES = List.of(
+            "Action",
+            "RPG",
+            "Sports",
+            "Strategy",
+            "Adventure",
+            "Racing",
+            "Horror",
+            "Simulation"
+    );
+
+    private static final List<String> TITLE_PREFIXES = List.of(
+            "Neon",
+            "Shadow",
+            "Cyber",
+            "Iron",
+            "Star",
+            "Dark",
+            "Pixel",
+            "Ghost",
+            "Solar",
+            "Crimson"
+    );
+
+    private static final List<String> TITLE_SUFFIXES = List.of(
+            "Strike",
+            "Legends",
+            "Frontier",
+            "Arena",
+            "Drift",
+            "Quest",
+            "Tactics",
+            "Protocol",
+            "Rivals",
+            "Odyssey"
+    );
+
+    private static final List<String> PRODUCT_IMAGES = List.of(
+            "/images/products/ghost-of-yotei.png",
+            "/images/products/ac-shadows.png",
+            "/images/products/war_thunder.png",
+            "/images/products/rdr2.png",
+            "/images/products/fortnite.png",
+            "/images/products/uncharted.png",
+            "/images/products/nfs.png",
+            "/images/products/fifa.png",
+            "/images/products/cod.png"
+    );
 
     public DataSeeder(
             UserRepository userRepository,
@@ -58,21 +108,35 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedProducts() {
-        if (productRepository.count() > 0) {
-            return;
-        }
+        Map<String, Product> existingProductsByName = productRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(Product::getName, product -> product, (first, second) -> first));
 
-        List<Category> categories = getOrCreateCategories();
-        List<Product> products = new ArrayList<>();
+        Map<String, Category> categoriesByName = getOrCreateCategories()
+                .stream()
+                .collect(Collectors.toMap(Category::getName, category -> category));
 
-        for (int i = 0; i < 20; i++) {
-            products.add(Product.builder()
-                    .name(faker.commerce().productName())
-                    .description(faker.lorem().sentence())
-                    .price(BigDecimal.valueOf(faker.number().randomDouble(2, 10, 150)))
-                    .category(categories.get(i % categories.size()))
-                    .build());
-        }
+        var products = generateGameSeeds()
+                .stream()
+                .map(game -> {
+                    var product = existingProductsByName.get(game.name());
+                    if (product == null) {
+                        return Product.builder()
+                                .name(game.name())
+                                .description(game.description())
+                                .price(game.price())
+                                .imageUrl(game.imageUrl())
+                                .category(categoriesByName.get(game.category()))
+                                .build();
+                    }
+
+                    product.setDescription(game.description());
+                    product.setPrice(game.price());
+                    product.setImageUrl(game.imageUrl());
+                    product.setCategory(categoriesByName.get(game.category()));
+                    return product;
+                })
+                .toList();
 
         productRepository.saveAll(products);
     }
@@ -81,17 +145,55 @@ public class DataSeeder implements CommandLineRunner {
         List<Category> categories = new ArrayList<>();
         categoryRepository.findAll().forEach(categories::add);
 
-        if (!categories.isEmpty()) {
+        var existingCategoryNames = categories
+                .stream()
+                .map(Category::getName)
+                .collect(Collectors.toSet());
+
+        List<Category> missingCategories = GAME_CATEGORIES
+                .stream()
+                .filter(categoryName -> !existingCategoryNames.contains(categoryName))
+                .map(Category::new)
+                .toList();
+
+        if (missingCategories.isEmpty()) {
             return categories;
         }
 
-        categories.add(new Category("Consoles"));
-        categories.add(new Category("Games"));
-        categories.add(new Category("Accessories"));
-        categories.add(new Category("Collectibles"));
-
         List<Category> savedCategories = new ArrayList<>();
-        categoryRepository.saveAll(categories).forEach(savedCategories::add);
-        return savedCategories;
+        categoryRepository.saveAll(missingCategories).forEach(savedCategories::add);
+
+        categories.addAll(savedCategories);
+        return categories;
+    }
+
+    private List<GameSeed> generateGameSeeds() {
+        List<GameSeed> games = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            String category = GAME_CATEGORIES.get(i % GAME_CATEGORIES.size());
+            String prefix = TITLE_PREFIXES.get(i % TITLE_PREFIXES.size());
+            String suffix = TITLE_SUFFIXES.get((i / TITLE_PREFIXES.size() + i) % TITLE_SUFFIXES.size());
+            BigDecimal price = BigDecimal.valueOf(19.99 + (i % 6) * 10);
+
+            games.add(new GameSeed(
+                    prefix + " " + suffix + " " + (i + 1),
+                    "A " + category.toLowerCase() + " game with fast progression and replayable challenges.",
+                    price,
+                    category,
+                    PRODUCT_IMAGES.get(i % PRODUCT_IMAGES.size())
+            ));
+        }
+
+        return games;
+    }
+
+    private record GameSeed(
+            String name,
+            String description,
+            BigDecimal price,
+            String category,
+            String imageUrl
+    ) {
     }
 }

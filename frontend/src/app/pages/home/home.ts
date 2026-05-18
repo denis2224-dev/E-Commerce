@@ -15,27 +15,27 @@ export class Home {
     { name: 'Strategy', items: 'Tactical decisions', path: '/categories' },
   ];
 
-  featuredGames = [
+  featuredProducts = [
     {
       name: 'Ghost of Yotei',
       category: 'Action',
       price: '$59.99',
       tag: 'Best seller',
-      imageUrl: '/images/games/ghost-of-yotei.png',
+      imageUrl: '/images/products/ghost-of-yotei.png',
     },
     {
       name: 'Assassins Creed Shadows',
       category: 'RPG',
       price: '$49.99',
       tag: 'New',
-      imageUrl: '/images/games/ac-shadows.png',
+      imageUrl: '/images/products/ac-shadows.png',
     },
     {
       name: 'War Thunder',
       category: 'Strategy',
       price: '$39.99',
       tag: 'Deal',
-      imageUrl: '/images/games/war_thunder.png',
+      imageUrl: '/images/products/war_thunder.png',
     },
   ];
 

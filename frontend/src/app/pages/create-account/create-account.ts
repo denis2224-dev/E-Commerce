@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize, timeout } from 'rxjs';
-import { Users } from '../../services/users';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-create-account',
@@ -20,7 +20,7 @@ export class CreateAccount {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private users: Users,
+    private users: UsersService,
   ) {
     this.createAccountForm = this.formBuilder.nonNullable.group({
       name: ['', [Validators.required, Validators.minLength(2)]],

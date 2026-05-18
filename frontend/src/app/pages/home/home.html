@@ -9,7 +9,7 @@
       </p>
 
       <div class="hero-actions">
-        <a class="primary-action" routerLink="/products">Browse games</a>
+        <a class="primary-action" routerLink="/games">Browse games</a>
         <a class="secondary-action" routerLink="/deals">View deals</a>
       </div>
     </div>
@@ -49,11 +49,11 @@
         <span class="eyebrow">Featured</span>
         <h2>Featured games</h2>
       </div>
-      <a routerLink="/products">View all</a>
+      <a routerLink="/games">View all</a>
     </div>
 
     <div class="product-grid">
-      @for (product of featuredGames; track product.name) {
+      @for (product of featuredProducts; track product.name) {
         <article class="product-card">
           <div
             class="product-art"

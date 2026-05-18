@@ -22,7 +22,7 @@ public class ProductController {
 
     @GetMapping
     public Iterable<ProductDto> getAllProducts(
-            @RequestParam(required = false, defaultValue = "", name = "categoryId") Byte categoryId
+            @RequestParam(required = false, name = "categoryId") Byte categoryId
     ) {
         List<Product> products;
         if (categoryId == null) {

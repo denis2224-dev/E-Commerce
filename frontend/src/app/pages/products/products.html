@@ -1,0 +1,88 @@
+<main class="products-page">
+  <section class="products-hero">
+    <div>
+      <span class="eyebrow">Library</span>
+      <h1>Games</h1>
+      <p>Browse featured titles, compare genres, and build your wishlist.</p>
+    </div>
+
+    <form class="products-toolbar" aria-label="Game filters">
+      <label class="search-field">
+        <span>Search</span>
+        <input type="search" placeholder="Search games" />
+      </label>
+
+      <label>
+        <span>Category</span>
+        <select>
+          <option>All categories</option>
+          <option>Action</option>
+          <option>RPG</option>
+          <option>Sports</option>
+          <option>Strategy</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Sort</span>
+        <select>
+          <option>Featured</option>
+          <option>Price: low to high</option>
+          <option>Price: high to low</option>
+          <option>Name</option>
+        </select>
+      </label>
+    </form>
+  </section>
+
+  <section class="featured-panel">
+    <div>
+      <span class="eyebrow">Featured deal</span>
+      <h2>Weekend picks are live.</h2>
+      <p>Save on selected action, RPG, and strategy games for a limited time.</p>
+    </div>
+    <button type="button">View deals</button>
+  </section>
+
+  <section class="products-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Catalog</span>
+        <h2>Available games</h2>
+      </div>
+      <span class="result-count">{{ products().length }} games</span>
+    </div>
+
+    @if (products().length > 0) {
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+          <article class="product-card">
+            <div
+              class="product-art"
+              [class.fallback-product-art]="!product.imageUrl"
+              [style.background-image]="product.imageUrl ? 'url(' + product.imageUrl + ')' : null"
+            >
+              <span>Game</span>
+            </div>
+
+            <div class="product-details">
+              <small>Category {{ product.categoryId }}</small>
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.description }}</p>
+
+              <div class="product-row">
+                <strong>${{ product.price }}</strong>
+                <button type="button">Wishlist</button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <h3>No games found</h3>
+        <p>Once games are loaded from the backend, they will appear here.</p>
+      </div>
+    }
+  </section>
+</main>
