@@ -1,0 +1,67 @@
+<main class="create-account-page">
+  <section class="create-account-panel">
+    <div class="panel-copy">
+      <span class="eyebrow">Join Game Store</span>
+      <h1>Create account</h1>
+      <p>Save your wishlist, track games, and check out faster.</p>
+    </div>
+
+    <form class="create-account-form">
+      <div class="field">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          type="text"
+          name="name"
+          autocomplete="name"
+          placeholder="Your full name"
+        />
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          autocomplete="new-password"
+          placeholder="Create a password"
+        />
+      </div>
+
+      <div class="field">
+        <label for="confirm-password">Confirm password</label>
+        <input
+          id="confirm-password"
+          type="password"
+          name="confirmPassword"
+          autocomplete="new-password"
+          placeholder="Repeat your password"
+        />
+      </div>
+
+      <label class="terms">
+        <input type="checkbox" name="terms" />
+        I agree to the terms
+      </label>
+
+      <button class="submit-button" type="submit">Create account</button>
+    </form>
+
+    <p class="sign-in-link">
+      Already have an account?
+      <a routerLink="/sign-in">Sign in</a>
+    </p>
+  </section>
+</main>
