@@ -6,16 +6,20 @@
       <p>Save your wishlist, track games, and check out faster.</p>
     </div>
 
-    <form class="create-account-form">
+    <form class="create-account-form" [formGroup]="createAccountForm" (ngSubmit)="submit()">
       <div class="field">
         <label for="name">Name</label>
         <input
           id="name"
           type="text"
           name="name"
+          formControlName="name"
           autocomplete="name"
           placeholder="Your full name"
         />
+        @if (createAccountForm.controls.name.touched && createAccountForm.controls.name.invalid) {
+          <small>Name is required.</small>
+        }
       </div>
 
       <div class="field">
@@ -24,9 +28,13 @@
           id="email"
           type="email"
           name="email"
+          formControlName="email"
           autocomplete="email"
           placeholder="you@example.com"
         />
+        @if (createAccountForm.controls.email.touched && createAccountForm.controls.email.invalid) {
+          <small>Enter a valid email address.</small>
+        }
       </div>
 
       <div class="field">
@@ -35,9 +43,13 @@
           id="password"
           type="password"
           name="password"
+          formControlName="password"
           autocomplete="new-password"
           placeholder="Create a password"
         />
+        @if (createAccountForm.controls.password.touched && createAccountForm.controls.password.invalid) {
+          <small>Password must be at least 8 characters.</small>
+        }
       </div>
 
       <div class="field">
@@ -46,17 +58,33 @@
           id="confirm-password"
           type="password"
           name="confirmPassword"
+          formControlName="confirmPassword"
           autocomplete="new-password"
           placeholder="Repeat your password"
         />
+        @if (
+          createAccountForm.controls.confirmPassword.touched &&
+          createAccountForm.controls.confirmPassword.invalid
+        ) {
+          <small>Passwords must match.</small>
+        }
       </div>
 
       <label class="terms">
-        <input type="checkbox" name="terms" />
+        <input type="checkbox" name="terms" formControlName="terms" />
         I agree to the terms
       </label>
+      @if (createAccountForm.controls.terms.touched && createAccountForm.controls.terms.invalid) {
+        <small class="terms-error">You must agree before creating an account.</small>
+      }
 
-      <button class="submit-button" type="submit">Create account</button>
+      @if (errorMessage) {
+        <p class="form-error">{{ errorMessage }}</p>
+      }
+
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+      </button>
     </form>
 
     <p class="sign-in-link">

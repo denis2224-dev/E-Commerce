@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/categories")
+@RequestMapping("/api/categories")
 public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -43,7 +43,7 @@ public class CategoryController {
         categoryRepository.save(category);
 
         var savedCategoryDto = categoryMapper.toDto(category);
-        var uri = uriBuilder.path("/categories/{id}").buildAndExpand(savedCategoryDto.getId()).toUri();
+        var uri = uriBuilder.path("/api/categories/{id}").buildAndExpand(savedCategoryDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(savedCategoryDto);
     }

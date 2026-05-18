@@ -13,7 +13,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/addresses")
+@RequestMapping("/api/addresses")
 public class AddressController {
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
@@ -49,7 +49,7 @@ public class AddressController {
         addressRepository.save(address);
 
         var savedAddressDto = addressMapper.toDto(address);
-        var uri = uriBuilder.path("/addresses/{id}").buildAndExpand(savedAddressDto.getId()).toUri();
+        var uri = uriBuilder.path("/api/addresses/{id}").buildAndExpand(savedAddressDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(savedAddressDto);
     }

@@ -14,7 +14,7 @@ import java.util.stream.StreamSupport;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/profiles")
+@RequestMapping("/api/profiles")
 public class ProfileController {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
@@ -54,7 +54,7 @@ public class ProfileController {
         profileRepository.save(profile);
 
         var savedProfileDto = profileMapper.toDto(profile);
-        var uri = uriBuilder.path("/profiles/{id}").buildAndExpand(savedProfileDto.getId()).toUri();
+        var uri = uriBuilder.path("/api/profiles/{id}").buildAndExpand(savedProfileDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(savedProfileDto);
     }

@@ -17,7 +17,7 @@ import java.util.Set;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -50,11 +50,15 @@ public class UserController {
             @RequestBody RegisterUserRequest request,
             UriComponentsBuilder uriBuilder
             ) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
         var user = userMapper.toEntity(request);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
-        var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
+        var uri = uriBuilder.path("/api/users/{id}").buildAndExpand(userDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(userDto);
     }
