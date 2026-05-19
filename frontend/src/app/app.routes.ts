@@ -4,6 +4,7 @@ import { SignIn } from './pages/sign-in/sign-in';
 import { Products } from './pages/products/products';
 import { CreateAccount } from './pages/create-account/create-account';
 import { Account } from './pages/account/account';
+import { Wishlist } from './pages/wishlist/wishlist';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -12,5 +13,6 @@ export const routes: Routes = [
   { path: 'account', component: Account },
   { path: 'games', component: Products },
   { path: 'products', redirectTo: 'games', pathMatch: 'full' },
+  { path: 'wishlist', component: Wishlist },
   { path: '**', redirectTo: '' },
 ];

@@ -1,0 +1,83 @@
+<main class="wishlist-page">
+  <section class="wishlist-hero">
+    <div>
+      <span class="eyebrow">Saved games</span>
+      <h1>Wishlist</h1>
+      <p>Keep track of games you want to buy, compare prices, and remove titles you no longer need.</p>
+    </div>
+
+    <div class="wishlist-summary">
+      <div>
+        <span>{{ wishlistItems().length }}</span>
+        <p>Saved</p>
+      </div>
+      <div>
+        <span>${{ wishlistTotal().toFixed(2) }}</span>
+        <p>Total value</p>
+      </div>
+      <button type="button" routerLink="/games">Browse games</button>
+    </div>
+  </section>
+
+  <section class="wishlist-panel">
+    <div>
+      <span class="eyebrow">Ready when you are</span>
+      <h2>Build your next checkout list.</h2>
+      <p>Your saved games stay here until you remove them or wire up checkout later.</p>
+    </div>
+    <button type="button" routerLink="/games">Add more</button>
+  </section>
+
+  <section class="wishlist-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Collection</span>
+        <h2>Saved titles</h2>
+      </div>
+      <span class="result-count">{{ wishlistItems().length }} games</span>
+    </div>
+
+    @if (wishlistItems().length > 0) {
+      <div class="wishlist-grid">
+        @for (product of wishlistItems(); track product.id) {
+          <article class="wishlist-card">
+            <div
+              class="wishlist-art"
+              [class.fallback-wishlist-art]="!product.imageUrl"
+              [style.background-image]="product.imageUrl ? 'url(' + product.imageUrl + ')' : null"
+            >
+              <span>Saved</span>
+            </div>
+
+            <div class="wishlist-details">
+              <small>Category {{ product.categoryId }}</small>
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.description }}</p>
+
+              <div class="wishlist-row">
+                <strong>${{ product.price }}</strong>
+                <button
+                  type="button"
+                  [disabled]="isWishlistUpdating(product.id)"
+                  (click)="removeFromWishlist(product)"
+                >
+                  @if (isWishlistUpdating(product.id)) {
+                    Removing
+                  } @else {
+                    Remove
+                  }
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <h3>Your wishlist is empty</h3>
+        <p>Save games from the catalog and they will appear here.</p>
+        <button type="button" routerLink="/games">Browse games</button>
+      </div>
+    }
+  </section>
+</main>
