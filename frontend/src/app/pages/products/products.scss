@@ -252,6 +252,18 @@ button {
   padding: 0 14px;
 }
 
+.wishlist-button.saved {
+  border-color: rgba(57, 255, 20, 0.75);
+  background: #39ff14;
+  color: #061006;
+  box-shadow: 0 0 22px rgba(57, 255, 20, 0.26);
+}
+
+.wishlist-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .empty-state {
   display: grid;
   gap: 10px;

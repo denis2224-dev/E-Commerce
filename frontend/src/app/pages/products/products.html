@@ -72,7 +72,21 @@
 
               <div class="product-row">
                 <strong>${{ product.price }}</strong>
-                <button type="button">Wishlist</button>
+                <button
+                  class="wishlist-button"
+                  type="button"
+                  [class.saved]="isWishlisted(product.id)"
+                  [disabled]="isWishlistUpdating(product.id)"
+                  (click)="toggleWishlist(product)"
+                >
+                  @if (isWishlistUpdating(product.id)) {
+                    Saving
+                  } @else if (isWishlisted(product.id)) {
+                    Saved
+                  } @else {
+                    Wishlist
+                  }
+                </button>
               </div>
             </div>
           </article>

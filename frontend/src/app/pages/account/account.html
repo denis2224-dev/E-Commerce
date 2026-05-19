@@ -1,0 +1,169 @@
+<main class="account-page">
+  <section class="account-hero">
+    <div>
+      <span class="eyebrow">Account</span>
+      <h1>My profile</h1>
+      <p>Manage your game library, wishlist, purchases, and account details.</p>
+    </div>
+
+    <div class="profile-summary">
+      <div class="avatar" aria-hidden="true">{{ profile.name.charAt(0) }}</div>
+      <div>
+        <h2>{{ profile.name }}</h2>
+        <p>{{ profile.email }}</p>
+      </div>
+      <span>{{ profile.level }}</span>
+    </div>
+  </section>
+
+  <section class="account-layout">
+    <aside class="account-sidebar" aria-label="Account summary">
+      <div class="member-card">
+        <span class="eyebrow">Member since</span>
+        <strong>{{ profile.memberSince }}</strong>
+      </div>
+
+      <div class="stats-grid">
+        @for (stat of stats(); track stat.label) {
+          <div class="stat-card">
+            <strong>{{ stat.value }}</strong>
+            <span>{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+
+      <button type="button" routerLink="/games">Browse games</button>
+    </aside>
+
+    <div class="account-content">
+      <section class="account-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Profile</span>
+            <h2>Account details</h2>
+          </div>
+          <button type="button">Save changes</button>
+        </div>
+
+        <form class="details-form">
+          <label>
+            <span>Name</span>
+            <input type="text" [value]="profile.name" />
+          </label>
+
+          <label>
+            <span>Email</span>
+            <input type="email" [value]="profile.email" />
+          </label>
+
+          <label>
+            <span>Current password</span>
+            <input type="password" placeholder="Current password" />
+          </label>
+
+          <label>
+            <span>New password</span>
+            <input type="password" placeholder="New password" />
+          </label>
+        </form>
+      </section>
+
+      <section class="account-grid">
+        <div class="account-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Library</span>
+              <h2>My games</h2>
+            </div>
+            <a routerLink="/games">View all</a>
+          </div>
+
+          <div class="item-list">
+            @for (game of libraryGames; track game.title) {
+              <article class="list-item">
+                <div>
+                  <h3>{{ game.title }}</h3>
+                  <p>{{ game.meta }}</p>
+                </div>
+                <span>{{ game.status }}</span>
+              </article>
+            }
+          </div>
+        </div>
+
+        <div class="account-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">Wishlist</span>
+              <h2>Saved games</h2>
+            </div>
+            <a routerLink="/games">Shop</a>
+          </div>
+
+          <div class="item-list">
+            @if (wishlistItems().length > 0) {
+              @for (item of wishlistItems(); track item.id) {
+                <article class="list-item">
+                  <div>
+                    <h3>{{ item.name }}</h3>
+                    <p>Category {{ item.categoryId }}</p>
+                  </div>
+                  <strong>${{ item.price }}</strong>
+                </article>
+              }
+            } @else {
+              <div class="wishlist-empty">
+                <h3>No saved games yet</h3>
+                <p>Save games from the catalog and they will appear here.</p>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="account-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="eyebrow">Orders</span>
+            <h2>Purchase history</h2>
+          </div>
+        </div>
+
+        <div class="orders-table">
+          <div class="table-row table-head">
+            <span>Order</span>
+            <span>Date</span>
+            <span>Total</span>
+            <span>Status</span>
+          </div>
+
+          @for (order of orders; track order.id) {
+            <div class="table-row">
+              <strong>{{ order.id }}</strong>
+              <span>{{ order.date }}</span>
+              <span>{{ order.total }}</span>
+              <span>{{ order.status }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="account-panel settings-panel">
+        <div>
+          <span class="eyebrow">Settings</span>
+          <h2>Preferences</h2>
+        </div>
+
+        <label class="toggle-row">
+          <span>Email me about deals</span>
+          <input type="checkbox" checked />
+        </label>
+
+        <label class="toggle-row">
+          <span>Show wishlist reminders</span>
+          <input type="checkbox" checked />
+        </label>
+      </section>
+    </div>
+  </section>
+</main>
