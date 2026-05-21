@@ -8,6 +8,7 @@ import com.gamestore.restapis.repositories.ProductRepository;
 import com.gamestore.restapis.repositories.UserRepository;
 import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class DataSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final PasswordEncoder passwordEncoder;
     private final Faker faker = new Faker();
     private static final List<String> GAME_CATEGORIES = List.of(
             "Action",
@@ -74,11 +76,13 @@ public class DataSeeder implements CommandLineRunner {
     public DataSeeder(
             UserRepository userRepository,
             ProductRepository productRepository,
-            CategoryRepository categoryRepository
+            CategoryRepository categoryRepository,
+            PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -100,7 +104,7 @@ public class DataSeeder implements CommandLineRunner {
             users.add(User.builder()
                     .name(firstName + " " + lastName)
                     .email(faker.internet().emailAddress(firstName.toLowerCase() + "." + lastName.toLowerCase()))
-                    .password(faker.internet().password(10, 20))
+                    .password(passwordEncoder.encode(faker.internet().password(10, 20)))
                     .build());
         }
 
