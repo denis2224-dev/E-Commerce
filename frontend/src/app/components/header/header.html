@@ -24,6 +24,10 @@
         />
       </svg>
     </button>
-    <button class="sign-in-button" type="button" routerLink="/sign-in">Sign in</button>
+    @if (isLoggedIn()) {
+      <button class="sign-in-button secondary" type="button" (click)="logout()">Logout</button>
+    } @else {
+      <button class="sign-in-button" type="button" routerLink="/sign-in">Sign in</button>
+    }
   </div>
 </header>
