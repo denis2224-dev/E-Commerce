@@ -16,3 +16,7 @@ spring:
 
 server:
   port: 8080
+
+security:
+  jwt:
+    secret: "dev-only-change-this-secret-key-which-is-at-least-32-chars"

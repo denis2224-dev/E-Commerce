@@ -3,6 +3,7 @@ package com.gamestore.restapis.controllers;
 import com.gamestore.restapis.dtos.LoginRequestDto;
 import com.gamestore.restapis.dtos.LoginResponseDto;
 import com.gamestore.restapis.repositories.UserRepository;
+import com.gamestore.restapis.services.JwtService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(
@@ -30,7 +32,7 @@ public class AuthController {
         }
 
         var response = new LoginResponseDto();
-        response.setToken("temporary-token-" + user.getId());
+        response.setToken(jwtService.generateToken(user));
 
         return ResponseEntity.ok(response);
     }
