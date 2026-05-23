@@ -6,16 +6,20 @@
       <p>Access your orders, saved addresses, wishlist, and faster checkout.</p>
     </div>
 
-    <form class="sign-in-form">
+    <form class="sign-in-form" [formGroup]="signInForm" (ngSubmit)="submit()">
       <div class="field">
         <label for="email">Email</label>
         <input
           id="email"
           type="email"
           name="email"
+          formControlName="email"
           autocomplete="email"
           placeholder="you@example.com"
         />
+        @if (signInForm.controls.email.touched && signInForm.controls.email.invalid) {
+          <small>Enter a valid email address.</small>
+        }
       </div>
 
       <div class="field">
@@ -24,21 +28,31 @@
           id="password"
           type="password"
           name="password"
+          formControlName="password"
           autocomplete="current-password"
           placeholder="Enter your password"
         />
+        @if (signInForm.controls.password.touched && signInForm.controls.password.invalid) {
+          <small>Password is required.</small>
+        }
       </div>
 
       <div class="form-row">
         <label class="remember-me">
-          <input type="checkbox" name="remember" />
+          <input type="checkbox" name="remember" formControlName="remember" />
           Remember me
         </label>
 
         <a routerLink="/forgot-password">Forgot password?</a>
       </div>
 
-      <button class="submit-button" type="submit">Sign in</button>
+      @if (errorMessage) {
+        <p class="form-error">{{ errorMessage }}</p>
+      }
+
+      <button class="submit-button" type="submit" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+      </button>
     </form>
 
     <p class="create-account">
