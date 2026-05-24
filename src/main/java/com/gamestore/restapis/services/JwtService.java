@@ -1,5 +1,6 @@
 package com.gamestore.restapis.services;
 
+import com.gamestore.restapis.entities.Role;
 import com.gamestore.restapis.entities.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class JwtService {
 
     public String generateToken(User user) {
         var now = Instant.now();
+        var role = user.getRole() == null ? Role.USER : user.getRole();
         var claims = JwtClaimsSet.builder()
                 .issuer("game-store")
                 .issuedAt(now)
@@ -26,6 +29,7 @@ public class JwtService {
                 .subject(user.getId().toString())
                 .claim("email", user.getEmail())
                 .claim("name", user.getName())
+                .claim("roles", List.of(role.name()))
                 .build();
         var headers = JwsHeader.with(MacAlgorithm.HS256).build();
 

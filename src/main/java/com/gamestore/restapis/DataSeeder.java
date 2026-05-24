@@ -2,6 +2,7 @@ package com.gamestore.restapis;
 
 import com.gamestore.restapis.entities.Category;
 import com.gamestore.restapis.entities.Product;
+import com.gamestore.restapis.entities.Role;
 import com.gamestore.restapis.entities.User;
 import com.gamestore.restapis.repositories.CategoryRepository;
 import com.gamestore.restapis.repositories.ProductRepository;
@@ -93,6 +94,7 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedUsers() {
         if (userRepository.count() > 0) {
+            assignMissingUserRoles();
             return;
         }
 
@@ -105,10 +107,23 @@ public class DataSeeder implements CommandLineRunner {
                     .name(firstName + " " + lastName)
                     .email(faker.internet().emailAddress(firstName.toLowerCase() + "." + lastName.toLowerCase()))
                     .password(passwordEncoder.encode(faker.internet().password(10, 20)))
+                    .role(Role.USER)
                     .build());
         }
 
         userRepository.saveAll(users);
+    }
+
+    private void assignMissingUserRoles() {
+        var usersWithoutRoles = userRepository.findAll()
+                .stream()
+                .filter(user -> user.getRole() == null)
+                .peek(user -> user.setRole(Role.USER))
+                .toList();
+
+        if (!usersWithoutRoles.isEmpty()) {
+            userRepository.saveAll(usersWithoutRoles);
+        }
     }
 
     private void seedProducts() {

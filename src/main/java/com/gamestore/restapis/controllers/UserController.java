@@ -4,6 +4,7 @@ import com.gamestore.restapis.dtos.ChangePasswordRequest;
 import com.gamestore.restapis.dtos.RegisterUserRequest;
 import com.gamestore.restapis.dtos.UpdateUserRequest;
 import com.gamestore.restapis.dtos.UserDto;
+import com.gamestore.restapis.entities.Role;
 import com.gamestore.restapis.mappers.UserMapper;
 import com.gamestore.restapis.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -58,6 +59,7 @@ public class UserController {
 
         var user = userMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
