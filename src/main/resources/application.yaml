@@ -21,4 +21,4 @@ server:
 
 security:
   jwt:
-    secret: "dev-only-change-this-secret-key-which-is-at-least-32-chars"
+    secret: ${JWT_SECRET}
