@@ -4,11 +4,13 @@ import com.gamestore.restapis.dtos.ProductDto;
 import com.gamestore.restapis.entities.WishlistItem;
 import com.gamestore.restapis.mappers.ProductMapper;
 import com.gamestore.restapis.repositories.ProductRepository;
-import com.gamestore.restapis.repositories.UserRepository;
 import com.gamestore.restapis.repositories.WishlistItemRepository;
+import com.gamestore.restapis.services.CurrentUserService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,20 +18,18 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/users/{userId}/wishlist")
+@RequestMapping("/api/me/wishlist")
 public class WishlistItemController {
     private final WishlistItemRepository wishlistItemRepository;
-    private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getWishlist(@PathVariable Long userId) {
-        if (!userRepository.existsById(userId)) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<List<ProductDto>> getWishlist(@AuthenticationPrincipal Jwt jwt) {
+        var user = currentUserService.getCurrentUser(jwt);
 
-        var products = wishlistItemRepository.findByUserId(userId)
+        var products = wishlistItemRepository.findByUserId(user.getId())
                 .stream()
                 .map(WishlistItem::getProduct)
                 .map(productMapper::toDto)
@@ -40,18 +40,18 @@ public class WishlistItemController {
 
     @PostMapping("/{productId}")
     public ResponseEntity<ProductDto> addToWishlist(
-            @PathVariable Long userId,
             @PathVariable Long productId,
+            @AuthenticationPrincipal Jwt jwt,
             UriComponentsBuilder uriBuilder
     ) {
-        var user = userRepository.findById(userId).orElse(null);
+        var user = currentUserService.getCurrentUser(jwt);
         var product = productRepository.findById(productId).orElse(null);
 
-        if (user == null || product == null) {
+        if (product == null) {
             return ResponseEntity.notFound().build();
         }
 
-        if (wishlistItemRepository.existsByUserIdAndProductId(userId, productId)) {
+        if (wishlistItemRepository.existsByUserIdAndProductId(user.getId(), productId)) {
             return ResponseEntity.ok(productMapper.toDto(product));
         }
 
@@ -63,8 +63,8 @@ public class WishlistItemController {
         wishlistItemRepository.save(wishlistItem);
 
         var uri = uriBuilder
-                .path("/api/users/{userId}/wishlist/{productId}")
-                .buildAndExpand(userId, productId)
+                .path("/api/me/wishlist/{productId}")
+                .buildAndExpand(productId)
                 .toUri();
 
         return ResponseEntity.created(uri).body(productMapper.toDto(product));
@@ -73,18 +73,16 @@ public class WishlistItemController {
     @DeleteMapping("/{productId}")
     @Transactional
     public ResponseEntity<Void> removeFromWishlist(
-            @PathVariable Long userId,
-            @PathVariable Long productId
+            @PathVariable Long productId,
+            @AuthenticationPrincipal Jwt jwt
     ) {
-        if (!userRepository.existsById(userId)) {
+        var user = currentUserService.getCurrentUser(jwt);
+
+        if (!wishlistItemRepository.existsByUserIdAndProductId(user.getId(), productId)) {
             return ResponseEntity.notFound().build();
         }
 
-        if (!wishlistItemRepository.existsByUserIdAndProductId(userId, productId)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        wishlistItemRepository.deleteByUserIdAndProductId(userId, productId);
+        wishlistItemRepository.deleteByUserIdAndProductId(user.getId(), productId);
         return ResponseEntity.noContent().build();
     }
 }

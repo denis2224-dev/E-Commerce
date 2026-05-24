@@ -10,8 +10,6 @@ import { WishlistService } from '../../services/wishlist.service';
   styleUrl: './wishlist.scss',
 })
 export class Wishlist implements OnInit {
-  private readonly currentUserId = 1;
-
   wishlistItems = signal<Product[]>([]);
   wishlistRequestIds = signal<Set<number>>(new Set());
 
@@ -36,7 +34,7 @@ export class Wishlist implements OnInit {
 
     this.setWishlistUpdating(product.id, true);
 
-    this.wishlistService.removeFromWishlist(this.currentUserId, product.id).subscribe({
+    this.wishlistService.removeFromWishlist(product.id).subscribe({
       next: () => {
         this.removeWishlistItem(product.id);
       },
@@ -51,7 +49,7 @@ export class Wishlist implements OnInit {
   }
 
   private loadWishlist() {
-    this.wishlistService.getWishlist(this.currentUserId).subscribe({
+    this.wishlistService.getWishlist().subscribe({
       next: (products) => {
         this.wishlistItems.set(products);
       },

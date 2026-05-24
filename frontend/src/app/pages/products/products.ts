@@ -1,4 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 import { ProductsService, Product } from '../../services/products.service';
 import { WishlistService } from '../../services/wishlist.service';
 
@@ -9,20 +11,23 @@ import { WishlistService } from '../../services/wishlist.service';
   styleUrl: './products.scss',
 })
 export class Products implements OnInit {
-  private readonly currentUserId = 1;
-
   products = signal<Product[]>([]);
   wishlistedProductIds = signal<Set<number>>(new Set());
   wishlistRequestIds = signal<Set<number>>(new Set());
 
   constructor(
+    private authService: AuthService,
     private productsService: ProductsService,
-    private wishlistService: WishlistService
+    private router: Router,
+    private wishlistService: WishlistService,
   ) {}
 
   ngOnInit() {
     this.loadProducts();
-    this.loadWishlist();
+
+    if (this.authService.isLoggedIn()) {
+      this.loadWishlist();
+    }
   }
 
   isWishlisted(productId: number) {
@@ -34,6 +39,11 @@ export class Products implements OnInit {
   }
 
   toggleWishlist(product: Product) {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigateByUrl('/sign-in');
+      return;
+    }
+
     if (this.isWishlistUpdating(product.id)) {
       return;
     }
@@ -41,7 +51,7 @@ export class Products implements OnInit {
     this.setWishlistUpdating(product.id, true);
 
     if (this.isWishlisted(product.id)) {
-      this.wishlistService.removeFromWishlist(this.currentUserId, product.id).subscribe({
+      this.wishlistService.removeFromWishlist(product.id).subscribe({
         next: () => {
           this.removeWishlistedProduct(product.id);
         },
@@ -56,7 +66,7 @@ export class Products implements OnInit {
       return;
     }
 
-    this.wishlistService.addToWishlist(this.currentUserId, product.id).subscribe({
+    this.wishlistService.addToWishlist(product.id).subscribe({
       next: () => {
         this.addWishlistedProduct(product.id);
       },
@@ -82,7 +92,7 @@ export class Products implements OnInit {
   }
 
   private loadWishlist() {
-    this.wishlistService.getWishlist(this.currentUserId).subscribe({
+    this.wishlistService.getWishlist().subscribe({
       next: (products) => {
         this.wishlistedProductIds.set(new Set(products.map((product) => product.id)));
       },

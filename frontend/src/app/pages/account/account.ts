@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../services/products.service';
+import { UsersService } from '../../services/users.service';
 import { WishlistService } from '../../services/wishlist.service';
 
 @Component({
@@ -10,11 +11,9 @@ import { WishlistService } from '../../services/wishlist.service';
   styleUrl: './account.scss',
 })
 export class Account implements OnInit {
-  private readonly currentUserId = 1;
-
   profile = {
-    name: 'Denis Moroz',
-    email: 'denis@example.com',
+    name: '',
+    email: '',
     memberSince: 'May 2026',
     level: 'Player',
   };
@@ -39,20 +38,53 @@ export class Account implements OnInit {
     { label: 'Orders', value: String(this.orders.length) },
   ]);
 
-  constructor(private wishlistService: WishlistService) {}
+  constructor(
+    private usersService: UsersService,
+    private wishlistService: WishlistService,
+  ) {}
 
   ngOnInit() {
+    this.loadProfile();
     this.loadWishlist();
   }
 
+  private loadProfile() {
+    this.usersService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.profile = {
+          name: user.name,
+          email: user.email,
+          memberSince: this.formatMemberSince(user.createdAt),
+          level: 'Player',
+        };
+      },
+      error: () => {
+        console.log('Could not load profile');
+      },
+    });
+  }
+
   private loadWishlist() {
-    this.wishlistService.getWishlist(this.currentUserId).subscribe({
+    this.wishlistService.getWishlist().subscribe({
       next: (products) => {
         this.wishlistItems.set(products);
       },
       error: () => {
         console.log('Could not load wishlist');
       },
+    });
+  }
+
+  private formatMemberSince(createdAt: string) {
+    const date = new Date(createdAt.replace(' ', 'T'));
+
+    if (Number.isNaN(date.getTime())) {
+      return 'May 2026';
+    }
+
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
     });
   }
 }
