@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-wishlist-items
+      author: codex
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: wishlist_items
+      changes:
+        - createTable:
+            tableName: wishlist_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_wishlist_items
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_wishlist_items_user
+                    references: users(id)
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_wishlist_items_product
+                    references: products(id)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+        - addUniqueConstraint:
+            tableName: wishlist_items
+            columnNames: user_id, product_id
+            constraintName: uk_wishlist_items_user_product
+        - createIndex:
+            tableName: wishlist_items
+            indexName: idx_wishlist_items_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: wishlist_items
+            indexName: idx_wishlist_items_product_id
+            columns:
+              - column:
+                  name: product_id
