@@ -1,37 +1,31 @@
 package com.gamestore.restapis.controllers;
 
 import com.gamestore.restapis.dtos.CategoryDto;
-import com.gamestore.restapis.mappers.CategoryMapper;
-import com.gamestore.restapis.repositories.CategoryRepository;
+import com.gamestore.restapis.services.CategoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.stream.StreamSupport;
-
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/categories")
 public class CategoryController {
-    private final CategoryRepository categoryRepository;
-    private final CategoryMapper categoryMapper;
+    private final CategoryService categoryService;
 
     @GetMapping
     public Iterable<CategoryDto> getAllCategories() {
-        return StreamSupport.stream(categoryRepository.findAll().spliterator(), false)
-                .map(categoryMapper::toDto)
-                .toList();
+        return categoryService.getCategories();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable Byte id) {
-        var category = categoryRepository.findById(id).orElse(null);
+        var category = categoryService.getCategory(id);
         if (category == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(categoryMapper.toDto(category));
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping
@@ -39,10 +33,7 @@ public class CategoryController {
             @RequestBody CategoryDto categoryDto,
             UriComponentsBuilder uriBuilder
     ) {
-        var category = categoryMapper.toEntity(categoryDto);
-        categoryRepository.save(category);
-
-        var savedCategoryDto = categoryMapper.toDto(category);
+        var savedCategoryDto = categoryService.createCategory(categoryDto);
         var uri = uriBuilder.path("/api/categories/{id}").buildAndExpand(savedCategoryDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(savedCategoryDto);
@@ -53,25 +44,20 @@ public class CategoryController {
             @PathVariable Byte id,
             @RequestBody CategoryDto categoryDto
     ) {
-        var category = categoryRepository.findById(id).orElse(null);
+        var category = categoryService.updateCategory(id, categoryDto);
         if (category == null) {
             return ResponseEntity.notFound().build();
         }
 
-        categoryMapper.update(categoryDto, category);
-        categoryRepository.save(category);
-
-        return ResponseEntity.ok(categoryMapper.toDto(category));
+        return ResponseEntity.ok(category);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Byte id) {
-        var category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
+        if (!categoryService.deleteCategory(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        categoryRepository.delete(category);
         return ResponseEntity.noContent().build();
     }
 }
