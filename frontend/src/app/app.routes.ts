@@ -6,6 +6,7 @@ import { Products } from './pages/products/products';
 import { CreateAccount } from './pages/create-account/create-account';
 import { Account } from './pages/account/account';
 import { Wishlist } from './pages/wishlist/wishlist';
+import { Cart } from './pages/cart/cart';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'create-account', component: CreateAccount },
   { path: 'games', component: Products },
   { path: 'products', redirectTo: 'games', pathMatch: 'full' },
+  { path: 'cart', component: Cart, canActivate: [authGuard] },
   { path: 'account', component: Account, canActivate: [authGuard] },
   { path: 'wishlist', component: Wishlist, canActivate: [authGuard] },
   // { path: 'checkout', component: Checkout, canActivate: [authGuard] },

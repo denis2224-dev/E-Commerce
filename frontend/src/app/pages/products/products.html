@@ -72,21 +72,38 @@
 
               <div class="product-row">
                 <strong>${{ product.price }}</strong>
-                <button
-                  class="wishlist-button"
-                  type="button"
-                  [class.saved]="isWishlisted(product.id)"
-                  [disabled]="isWishlistUpdating(product.id)"
-                  (click)="toggleWishlist(product)"
-                >
-                  @if (isWishlistUpdating(product.id)) {
-                    Saving
-                  } @else if (isWishlisted(product.id)) {
-                    Saved
-                  } @else {
-                    Wishlist
-                  }
-                </button>
+                <div class="product-actions">
+                  <button
+                    class="cart-button"
+                    type="button"
+                    [class.added]="isInCart(product.id)"
+                    [disabled]="isCartUpdating(product.id)"
+                    (click)="addToCart(product)"
+                  >
+                    @if (isCartUpdating(product.id)) {
+                      Adding
+                    } @else if (isInCart(product.id)) {
+                      Added
+                    } @else {
+                      Add
+                    }
+                  </button>
+                  <button
+                    class="wishlist-button"
+                    type="button"
+                    [class.saved]="isWishlisted(product.id)"
+                    [disabled]="isWishlistUpdating(product.id)"
+                    (click)="toggleWishlist(product)"
+                  >
+                    @if (isWishlistUpdating(product.id)) {
+                      Saving
+                    } @else if (isWishlisted(product.id)) {
+                      Saved
+                    } @else {
+                      Wishlist
+                    }
+                  </button>
+                </div>
               </div>
             </div>
           </article>

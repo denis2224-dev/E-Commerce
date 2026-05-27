@@ -13,3 +13,5 @@ databaseChangeLog:
       file: db/changelog/006-create-wishlist-items.yaml
   - include:
       file: db/changelog/007-add-user-role.yaml
+  - include:
+      file: db/changelog/008-create-cart-item.yaml

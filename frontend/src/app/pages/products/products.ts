@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 import { ProductsService, Product } from '../../services/products.service';
 import { WishlistService } from '../../services/wishlist.service';
 
@@ -12,11 +13,13 @@ import { WishlistService } from '../../services/wishlist.service';
 })
 export class Products implements OnInit {
   products = signal<Product[]>([]);
+  cartRequestIds = signal<Set<number>>(new Set());
   wishlistedProductIds = signal<Set<number>>(new Set());
   wishlistRequestIds = signal<Set<number>>(new Set());
 
   constructor(
     private authService: AuthService,
+    private cartService: CartService,
     private productsService: ProductsService,
     private router: Router,
     private wishlistService: WishlistService,
@@ -26,8 +29,40 @@ export class Products implements OnInit {
     this.loadProducts();
 
     if (this.authService.isLoggedIn()) {
+      this.loadCart();
       this.loadWishlist();
     }
+  }
+
+  isInCart(productId: number) {
+    return this.cartService.isInCart(productId);
+  }
+
+  isCartUpdating(productId: number) {
+    return this.cartRequestIds().has(productId);
+  }
+
+  addToCart(product: Product) {
+    if (!this.authService.isLoggedIn()) {
+      this.router.navigateByUrl('/sign-in');
+      return;
+    }
+
+    if (this.isCartUpdating(product.id)) {
+      return;
+    }
+
+    this.setCartUpdating(product.id, true);
+
+    this.cartService.addProduct(product.id).subscribe({
+      error: () => {
+        console.log('Could not add product to cart');
+        this.setCartUpdating(product.id, false);
+      },
+      complete: () => {
+        this.setCartUpdating(product.id, false);
+      },
+    });
   }
 
   isWishlisted(productId: number) {
@@ -99,6 +134,28 @@ export class Products implements OnInit {
       error: () => {
         console.log('Could not load wishlist');
       },
+    });
+  }
+
+  private loadCart() {
+    this.cartService.loadCart().subscribe({
+      error: () => {
+        console.log('Could not load cart');
+      },
+    });
+  }
+
+  private setCartUpdating(productId: number, isUpdating: boolean) {
+    this.cartRequestIds.update((productIds) => {
+      const nextProductIds = new Set(productIds);
+
+      if (isUpdating) {
+        nextProductIds.add(productId);
+      } else {
+        nextProductIds.delete(productId);
+      }
+
+      return nextProductIds;
     });
   }
 

@@ -1,0 +1,124 @@
+<main class="cart-page">
+  <section class="cart-hero">
+    <div>
+      <span class="eyebrow">Checkout list</span>
+      <h1>Cart</h1>
+      <p>Review the games you want to buy, adjust quantities, and prepare the order before checkout.</p>
+    </div>
+
+    <div class="cart-summary">
+      <div>
+        <span>{{ cartCount() }}</span>
+        <p>Items</p>
+      </div>
+      <div>
+        <span>${{ cartTotal().toFixed(2) }}</span>
+        <p>Total</p>
+      </div>
+      <button type="button" routerLink="/games">Browse games</button>
+    </div>
+  </section>
+
+  <section class="cart-panel">
+    <div>
+      <span class="eyebrow">Order prep</span>
+      <h2>Your next checkout starts here.</h2>
+      <p>Your selected games are saved to your account and stay available when you sign back in.</p>
+    </div>
+
+    @if (cartItems().length > 0) {
+      <button type="button" (click)="clearCart()">Clear cart</button>
+    }
+  </section>
+
+  <section class="cart-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Selected games</span>
+        <h2>Cart items</h2>
+      </div>
+      <span class="result-count">{{ cartItems().length }} games</span>
+    </div>
+
+    @if (cartItems().length > 0) {
+      <div class="cart-layout">
+        <div class="cart-items">
+          @for (item of cartItems(); track item.id) {
+            <article class="cart-item">
+              <div
+                class="cart-art"
+                [class.fallback-cart-art]="!item.productImageUrl"
+                [style.background-image]="item.productImageUrl ? 'url(' + item.productImageUrl + ')' : null"
+              >
+                <span>Cart</span>
+              </div>
+
+              <div class="cart-details">
+                <small>Category {{ item.categoryId }}</small>
+                <h3>{{ item.productName }}</h3>
+                <p>{{ item.productDescription }}</p>
+
+                <div class="cart-controls">
+                  <strong>${{ item.productPrice }}</strong>
+
+                  <div class="quantity-control" aria-label="Quantity">
+                    <button type="button" (click)="decreaseQuantity(item.productId)">-</button>
+                    <input
+                      type="number"
+                      min="1"
+                      max="99"
+                      [value]="item.quantity"
+                      (change)="updateQuantity(item.productId, $event)"
+                    />
+                    <button type="button" (click)="increaseQuantity(item.productId)">+</button>
+                  </div>
+
+                  <strong>${{ item.subtotal.toFixed(2) }}</strong>
+
+                  <button
+                    class="remove-button"
+                    type="button"
+                    (click)="removeFromCart(item.productId)"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+
+        <aside class="checkout-summary">
+          <span class="eyebrow">Summary</span>
+          <h3>Order total</h3>
+
+          <div class="summary-row">
+            <span>Items</span>
+            <strong>{{ cartCount() }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong>${{ cartTotal().toFixed(2) }}</strong>
+          </div>
+          <div class="summary-row muted">
+            <span>Taxes</span>
+            <strong>Calculated later</strong>
+          </div>
+
+          <button class="checkout-button" type="button" disabled>Checkout soon</button>
+        </aside>
+      </div>
+    } @else {
+      <div class="empty-state">
+        @if (isLoadingCart()) {
+          <h3>Loading cart</h3>
+          <p>Your selected games will appear here.</p>
+        } @else {
+          <h3>Your cart is empty</h3>
+          <p>Add games from the catalog and they will appear here.</p>
+          <button type="button" routerLink="/games">Browse games</button>
+        }
+      </div>
+    }
+  </section>
+</main>

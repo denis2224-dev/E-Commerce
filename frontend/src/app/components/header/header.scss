@@ -80,6 +80,7 @@ button {
 }
 
 .icon-button,
+.cart-button,
 .sign-in-button {
   border-radius: 8px;
   border: 1px solid rgba(57, 255, 20, 0.45);
@@ -100,6 +101,29 @@ button {
   fill: currentColor;
 }
 
+.cart-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  color: #39ff14;
+  font-weight: 800;
+}
+
+.cart-button span {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #39ff14;
+  color: #061006;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .sign-in-button {
   height: 40px;
   padding: 0 18px;
@@ -115,6 +139,7 @@ button {
 }
 
 .icon-button:hover,
+.cart-button:hover,
 .sign-in-button:hover {
   border-color: #39ff14;
   box-shadow: 0 0 22px rgba(57, 255, 20, 0.4);

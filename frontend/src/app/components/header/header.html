@@ -24,6 +24,12 @@
         />
       </svg>
     </button>
+    <button class="cart-button" type="button" routerLink="/cart">
+      Cart
+      @if (cartItemCount() > 0) {
+        <span>{{ cartItemCount() }}</span>
+      }
+    </button>
     @if (isLoggedIn()) {
       <button class="sign-in-button secondary" type="button" (click)="logout()">Logout</button>
     } @else {

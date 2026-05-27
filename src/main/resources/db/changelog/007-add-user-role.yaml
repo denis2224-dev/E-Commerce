@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 007-add-user-role
-      author: codex
+      author: Denis
       preConditions:
         - onFail: MARK_RAN
         - not:
