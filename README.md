@@ -8,6 +8,7 @@ Full-stack game store application with an Angular storefront and a Spring Boot R
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-cache-DC382D?logo=redis&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![Liquibase](https://img.shields.io/badge/Liquibase-migrations-2962FF)
 ![JWT](https://img.shields.io/badge/Security-JWT%20%2B%20RBAC-111827)
 
@@ -17,9 +18,9 @@ Full-stack game store application with an Angular storefront and a Spring Boot R
 
 ## Snapshot
 
-Game Store is a portfolio-style full-stack project focused on the kind of backend work used in real applications: authentication, authorization, database migrations, caching, DTOs, and user-specific API endpoints.
+Game Store is a portfolio-style full-stack project focused on the kind of backend work used in real applications: authentication, authorization, database migrations, caching, DTOs, user-specific API endpoints, and Dockerized deployment.
 
-The frontend is an Angular app for browsing games, creating an account, signing in, viewing account data, and managing a wishlist. The backend is a Spring Boot API backed by PostgreSQL, secured with JWT, and optimized with Redis caching.
+The frontend is an Angular app for browsing games, creating an account, signing in, viewing account data, and managing a wishlist. The backend is a Spring Boot API backed by PostgreSQL, secured with JWT, optimized with Redis caching, and runnable together with the frontend through Docker Compose.
 
 ## Highlights
 
@@ -31,6 +32,7 @@ The frontend is an Angular app for browsing games, creating an account, signing 
 | Database | PostgreSQL schema managed with Liquibase migrations |
 | Caching | Redis caching through Spring Cache |
 | Mapping | DTO/entity conversion with MapStruct |
+| Containers | Dockerfiles for backend/frontend and Docker Compose for the full stack |
 | Dev Data | DataFaker seeding for users, games, and categories |
 
 ## Feature Map
@@ -50,14 +52,15 @@ The frontend is an Angular app for browsing games, creating an account, signing 
 | Role-based authorization | Done |
 | Liquibase migrations | Done |
 | Redis product/category caching | Done |
+| Docker Compose full-stack setup | Done |
 | Orders and checkout | Planned |
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    Browser[Angular Frontend] --> Proxy[Angular Proxy /api]
-    Proxy --> API[Spring Boot REST API]
+    Browser[Browser] --> Frontend[Nginx + Angular]
+    Frontend --> API[Spring Boot REST API]
     API --> Security[Spring Security]
     Security --> Controllers[Controllers]
     Controllers --> Services[Services]
@@ -73,6 +76,7 @@ Protected request flow:
 Angular page
   -> route guard checks if a token exists
   -> HTTP interceptor adds Authorization: Bearer <token>
+  -> Nginx forwards /api requests to the backend container
   -> Spring Security validates the JWT
   -> controller receives the request
   -> service reads the logged-in user from the token
@@ -83,7 +87,13 @@ Angular page
 
 ```text
 .
+|-- Dockerfile                                 Backend image
+|-- docker-compose.yml                         Full-stack Docker Compose setup
+|-- .dockerignore                              Backend Docker build ignore file
 |-- frontend/                                  Angular app
+|   |-- Dockerfile                             Frontend image
+|   |-- nginx.conf                             Serves Angular and proxies /api
+|   `-- .dockerignore                          Frontend Docker build ignore file
 |-- src/main/java/com/gamestore/restapis/      Spring Boot backend
 |   |-- config/                                Security and cache configuration
 |   |-- controllers/                           REST controllers
@@ -95,7 +105,99 @@ Angular page
 `-- src/main/resources/db/changelog/           Liquibase migrations
 ```
 
-## Local Setup
+## Docker Setup
+
+The easiest way to run the whole project is Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+This starts:
+
+| Service | Image | Public port | Purpose |
+| --- | --- | --- | --- |
+| `frontend` | custom Angular/Nginx image | `4200:80` | Serves the Angular app |
+| `backend` | custom Spring Boot image | `8080:8080` | Runs the REST API |
+| `postgres` | `postgres:16-alpine` | `55433:5432` | Stores application data |
+| `redis` | `redis:7-alpine` | internal only | Stores cache data |
+
+Open the app:
+
+```text
+Frontend: http://localhost:4200
+Backend:  http://localhost:8080
+```
+
+PostgreSQL is exposed on `55433` so it does not conflict with another local Postgres container using `55432`.
+
+IntelliJ/DataGrip datasource for the Docker database:
+
+```text
+Host:     localhost
+Port:     55433
+Database: game_store
+User:     postgres
+Password: postgres
+```
+
+JDBC URL:
+
+```text
+jdbc:postgresql://localhost:55433/game_store
+```
+
+Inside Docker, the backend connects to Postgres through the Compose service name:
+
+```text
+jdbc:postgresql://postgres:5432/game_store
+```
+
+### Environment File
+
+Docker Compose reads local environment values from `.env`.
+
+Example:
+
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/game_store
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
+SPRING_REDIS_HOST=redis
+SPRING_REDIS_PORT=6379
+JWT_SECRET=replace-this-with-a-long-generated-secret
+```
+
+`.env` is ignored by Git because it can contain secrets.
+
+Generate a local JWT secret:
+
+```bash
+openssl rand -hex 64
+```
+
+Useful Docker commands:
+
+```bash
+docker compose up --build
+docker compose down
+docker compose logs -f backend
+docker compose logs -f frontend
+```
+
+Access the Docker Postgres database from terminal:
+
+```bash
+docker exec -it game-store-postgres psql -U postgres -d game_store
+```
+
+List tables inside `psql`:
+
+```sql
+\dt
+```
+
+## Manual Local Setup
 
 Prerequisites:
 
@@ -104,20 +206,22 @@ Prerequisites:
 - Docker, or local PostgreSQL and Redis installations
 - Maven wrapper included as `./mvnw`
 
-Start PostgreSQL:
+Use this setup if you want to run the backend from IntelliJ or Maven and the frontend with Angular's dev server.
+
+Start PostgreSQL manually:
 
 ```bash
-docker run --name game-store-postgres \
+docker run --name game-store-local-postgres \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=game_store \
   -p 55432:5432 \
   -d postgres:16
 ```
 
-Start Redis:
+Start Redis manually:
 
 ```bash
-docker run --name game-store-redis \
+docker run --name game-store-local-redis \
   -p 6379:6379 \
   -d redis:7-alpine
 ```
@@ -168,9 +272,9 @@ Important local settings:
 ```yaml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:55432/game_store
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:55432/game_store}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
   jpa:
@@ -178,8 +282,8 @@ spring:
       ddl-auto: validate
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
   cache:
     type: redis
 
@@ -353,6 +457,24 @@ export JWT_SECRET="your-long-random-secret"
 ./mvnw spring-boot:run
 ```
 
+Build Docker images:
+
+```bash
+docker compose build
+```
+
+Run the full Docker stack:
+
+```bash
+docker compose up
+```
+
+Stop the Docker stack:
+
+```bash
+docker compose down
+```
+
 Install frontend dependencies:
 
 ```bash
@@ -383,6 +505,7 @@ Implemented:
 - Angular login, route guards, and HTTP interceptor
 - Liquibase database migrations
 - Redis caching for product and category reads
+- Docker Compose setup for frontend, backend, PostgreSQL, and Redis
 
 Planned:
 
