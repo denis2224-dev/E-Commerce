@@ -1,0 +1,32 @@
+# Git
+.git
+.gitignore
+
+# Backend build output
+target
+*.jar
+
+# Frontend files are built with a separate frontend image
+frontend
+
+# Node/Angular build artifacts, in case the frontend is included later
+node_modules
+dist
+.angular
+
+# IDE and OS files
+.idea
+.vscode
+.DS_Store
+*.iml
+
+# Local environment and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Logs and temporary files
+*.log
+tmp
+temp

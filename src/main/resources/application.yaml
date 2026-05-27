@@ -2,9 +2,9 @@ spring:
   application:
     name: restapis
   datasource:
-    url: jdbc:postgresql://localhost:55432/game_store
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:55432/game_store}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
@@ -17,8 +17,8 @@ spring:
         format_sql: false
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
   cache:
     type: redis
     cache-names:

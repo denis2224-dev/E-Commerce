@@ -1,0 +1,23 @@
+# Dependencies and Angular cache
+node_modules
+.angular
+
+# Build output
+dist
+coverage
+
+# Git and local tooling
+.git
+.gitignore
+.vscode
+.idea
+
+# OS, logs, and local files
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env
+.env.*
